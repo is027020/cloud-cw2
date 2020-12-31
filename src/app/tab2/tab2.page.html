@@ -1,8 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Flights
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="updatePassengerNumbers()" color="dark" fill="outline" strong="true">Refresh</ion-button>
+      <! -- these buttons left in for testing -->
+      <ion-button (click)="calcDate()"  color="secondary">Calc</ion-button>
+      <ion-button (click)="mapFlights()"  color="secondary">Map</ion-button>
+      <ion-button (click)="reduceFlights()"  color="secondary">Reduce</ion-button>
+      </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -10,8 +14,29 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Flights</ion-title>
-    </ion-toolbar>
+  </ion-toolbar>
   </ion-header>
+  <ion-list>
+  <ion-item-sliding *ngFor="let flight of flights" >
+  <ion-item >
+  <ion-label>
+   Flight: {{flight.flight}}
+  </ion-label>
+  <ion-label>
+   Departs: {{flight.dep_time}}
+  </ion-label>
+  <ion-label>
+   Arrives: {{flight.arr_time}}
+  </ion-label>
+  <ion-label>
+   Passengers: {{flight.numPassengers}}
+  </ion-label>
+  <ion-buttons slot="end">
+    <ion-button (click)="presentPassengerList(flight.flight)"><ion-icon slot="icon-only" name="person"> </ion-icon></ion-button>
+</ion-buttons>
+  </ion-item>
+  </ion-item-sliding>
+  </ion-list>
 
-  <app-explore-container name="Flights page"></app-explore-container>
+  
 </ion-content>

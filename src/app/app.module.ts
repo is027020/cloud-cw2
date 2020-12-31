@@ -11,6 +11,8 @@ import { AppComponent } from './app.component';
 //Httpclient needed for file read
 import { HttpClientModule } from '@angular/common/http';
 
+import {PassengerListPage} from './passenger-list/passenger-list.page';
+
 
 @NgModule({
   declarations: [AppComponent],

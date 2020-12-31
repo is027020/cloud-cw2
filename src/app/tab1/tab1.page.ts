@@ -47,7 +47,8 @@ export class Tab1Page {
         const list = data.split('\n');
         list.forEach( e => {
         const rowData=e.split(',');
-        this.flights.push({passenger:rowData[0],flight:rowData[1],from:rowData[2],to:rowData[3],date_time:rowData[4],duration:rowData[5]});
+        this.flights.push({passenger:rowData[0],flight:rowData[1],from:rowData[2],to:rowData[3],date_time:rowData[4],
+          duration:rowData[5],dep_time:"",arr_time:"",numPassengers:""});
         });
       });
       }
