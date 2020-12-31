@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {ToastController} from '@ionic/angular'
 import { Airport,AirportsService } from '../airports.service';
 import { FlightData, FlightsService } from '../flights.service';
 
@@ -13,7 +14,11 @@ export class Tab1Page {
   mapResult:any=[];
   mapReduceResult:any=[];
   constructor(private airportsService:AirportsService,
-    private flightsService:FlightsService) {}
+    private flightsService:FlightsService,
+    private toastController:ToastController) {
+
+      
+    }
   ngOnInit() {
    
     // reading csv file is an async process - for prototype purposes its done inside each component - 
@@ -21,10 +26,10 @@ export class Tab1Page {
 
     this.loadAirportData();
     this.loadFlightData();
-
+    
     }
 
-    loadAirportData() {
+    private loadAirportData() {
     this.airportsService.getAllAirports().subscribe(data => {
       const list = data.split('\n');
       list.forEach( e => {
