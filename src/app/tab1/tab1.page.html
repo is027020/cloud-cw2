@@ -1,20 +1,34 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Airports
-    </ion-title>
+  <ion-toolbar> <ion-buttons slot="start">
+    <ion-button (click)="updateFlightNumbers()" color="dark" fill="outline" strong="true">Refresh</ion-button>
+    <! -- these buttons left in for testing -->
+    <ion-button (click)="mapAirportFlights()" disabled="true" color="secondary">Map</ion-button>
+    <ion-button (click)="reduceAirportFlights()" disabled="true" color="secondary">Reduce</ion-button>
+    
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 <ion-list>
+  <ion-item >
+    <ion-label>
+      City
+    </ion-label>
+    <ion-label>
+      Code
+    </ion-label>
+    <ion-label>
+      Flights
+    </ion-label>
+    </ion-item>
 <ion-item-sliding *ngFor="let airport of airports" >
 <ion-item >
 <ion-label>
-  {{airport.code}}
+  {{airport.name}}
 </ion-label>
 <ion-label>
-  {{airport.name}}
+  {{airport.code}}
 </ion-label>
 <ion-label>
   {{airport.numFlights}}
