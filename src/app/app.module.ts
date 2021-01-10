@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 //Httpclient needed for file read
 import { HttpClientModule } from '@angular/common/http';
+import { FileSaverModule } from 'ngx-filesaver';
 
 import {PassengerListPage} from './passenger-list/passenger-list.page';
 
@@ -17,7 +18,7 @@ import {PassengerListPage} from './passenger-list/passenger-list.page';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,FileSaverModule,HttpClientModule],
   providers: [
     StatusBar,
     SplashScreen,

@@ -1,9 +1,43 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Error Log</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="loadData()" color="dark" fill="outline" strong="true">Load Data</ion-button>
+      <! -- these buttons left in for testing   -->
+      <ion-button (click)="checkAirports()"  color="secondary">Airports</ion-button> 
+      <ion-button (click)="checkFlights()"  color="secondary">Flights</ion-button> 
+  
+      <ion-button (click)="saveErrorLog()"  color="secondary">Save File</ion-button>
+  
+
+      </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true">
+  <ion-header>
+ 
+    <ion-toolbar>
+      <ion-title size="large">Error Log</ion-title>
+  </ion-toolbar>
+  </ion-header>
+  <ion-list>
 
+    <ion-item  class="plan"  *ngFor="let error of errors">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="2">
+           <div>{{error.type}}</div> 
+          </ion-col>
+          <ion-col size="7" >
+            <div > {{error.record}}</div>
+          </ion-col>
+          <ion-col size="1" class="plan-right">
+            <div> {{error.action}} </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+
+  
+  </ion-list>
 </ion-content>

@@ -7,6 +7,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AirportsService {
   csvData = './assets/airports.csv';
+
+  airports:Airport[]=[];
+
   constructor(private http: HttpClient) { }
   
 
@@ -68,6 +71,13 @@ export class AirportsService {
 
       
         return reduceResult;
+
+    }
+
+    public loadAirports(correctedAirports){
+console.log('in airport servcie '+correctedAirports.length);
+      this.airports=correctedAirports;
+      console.log('in airport servcie local'+this.airports.length);
 
     }
       
