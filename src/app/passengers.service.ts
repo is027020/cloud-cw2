@@ -15,17 +15,10 @@ export class PassengersService {
   
     for(j=0;j<flightData.length;j++)
       {
-        
           mapResult.push({key:flightData[j].passenger,
             value:this.calcDistance(flightData[j].from,flightData[j].to,airports)
           });
-        
       }
-      for(j=0;j<20;j++){
-        console.log(" passenger "+mapResult[j].key+" distance "+mapResult[j].value);
-      }
-     
-
   return mapResult;
 
   }
@@ -81,7 +74,7 @@ export class PassengersService {
           
         for(j=0;j<mapData.length;j++)
         {
-         // console.log("key 1  "+mapData[j].key+"in airport list "+airportList.indexOf(mapData[j].key)+ " in reduced set "+reduceResult.indexOf(mapData[j].key));
+        
           if(passengerList.indexOf(mapData[j].key)<0)
           {
             passengerList.push(mapData[j].key);
@@ -89,27 +82,17 @@ export class PassengersService {
             
           }
         }
-        //console.log("num Flights "+flightList.length);
     
         for (i=0;i<passengerList.length;i++){
-          
-            for (j=0;j<mapData.length;j++){
-              
+            for (j=0;j<mapData.length;j++){  
               if(reduceResult[i].key==mapData[j].key){
-                console.log("passenger "+reduceResult[i].key+" value "+reduceResult[i].value+" distance "+mapData[j].value);
                 reduceResult[i].value=reduceResult[i].value+mapData[j].value;
-               
               }
-    
-                
             }
-           
           }
           for (i=0;i<reduceResult.length;i++){
-          console.log(" passenger "+reduceResult[i].key+"  miles "+reduceResult[i].value);
           }
             return reduceResult;
-    
         }
 
 

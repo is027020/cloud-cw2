@@ -5,6 +5,7 @@
       <! -- these buttons left in for testing -->
       <ion-button (click)="mapPassengers()"  color="secondary">Map</ion-button>
       <ion-button (click)="reducePassengers()"  color="secondary">Reduce</ion-button>
+      <ion-button (click)="saveToFile()"  color="secondary">Save File</ion-button>
       </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -18,8 +19,11 @@
   <ion-list>
   <ion-item-sliding *ngFor="let passenger of passengers" >
   <ion-item >
-    <ion-icon *ngIf="[passenger.rank]=='top3'" slot="end" name="medal"></ion-icon>
-    <ion-icon *ngIf="[passenger.rank]==''" slot="end" ></ion-icon>
+    <ion-icon *ngIf="[passenger.rank]=='1'" slot="end" name="trophy"></ion-icon>
+    <ion-icon *ngIf="[passenger.rank]=='2'" slot="end" name="medal"></ion-icon>
+    <ion-icon *ngIf="[passenger.rank]=='3'" slot="end" name="medal"></ion-icon>
+    <ion-icon *ngIf="[passenger.rank]!='3' && [passenger.rank]!='2' && [passenger.rank]!='1'" 
+    slot="end" ></ion-icon>
   <ion-label>
    {{passenger.passenger}}
   </ion-label>

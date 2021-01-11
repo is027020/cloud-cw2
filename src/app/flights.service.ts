@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class FlightsService {
-  csvData = './assets/flightdata.csv';
+  csvData = './assets/AComp_Passenger_data.csv';
   constructor(private http: HttpClient) { }
   
 
@@ -87,7 +87,7 @@ export class FlightsService {
     
 
 
-export interface FlightData {
+export interface Flight {
 
   passenger:string;
   flight:string;

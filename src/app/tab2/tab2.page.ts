@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import {ActionSheetController} from '@ionic/angular'
 import {AlertController} from '@ionic/angular'
 import {ModalController} from '@ionic/angular'
-import { FlightData, FlightsService } from '../flights.service';
+import { Flight, FlightsService } from '../flights.service';
+import { AirportData, FlightData, DataService } from '../data.service';
 import { PassengerListPage } from '../passenger-list/passenger-list.page';
 
 
@@ -12,11 +13,11 @@ import { PassengerListPage } from '../passenger-list/passenger-list.page';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  flightdata:FlightData[]=[];
+  flightdata:Flight[]=[];
   flights:any=[];
   mapResult:any=[];
   mapReduceResult:any=[];
-  constructor(private flightsService:FlightsService,private modalController:ModalController) {}
+  constructor(private dataService:DataService, private flightsService:FlightsService,private modalController:ModalController) {}
   ngOnInit() {
    
     // reading csv file is an async process - for prototype purposes its done inside each component - 
@@ -24,20 +25,17 @@ export class Tab2Page {
 
     
     this.loadFlightData();
+    this.updatePassengerNumbers();
     
     }
-
-    private loadFlightData()
-    {
-      this.flightsService.getAllFlights().subscribe(data => {
-        const list = data.split('\n');
-        list.forEach( e => {
-        const rowData=e.split(',');
-        this.flightdata.push({passenger:rowData[0],flight:rowData[1],from:rowData[2],to:rowData[3],date_time:rowData[4],
-          duration:rowData[5],dep_time:"",arr_time:"",numPassengers:""});
-        });
-      });
+    private loadFlightData() {
+      console.log("flights before "+this.flightdata.length);
+      this.flightdata=this.dataService.loadCorrectedFlights(this.flightdata);
+      console.log("flights after "+this.flightdata.length);
       }
+
+
+    
 
 private updatePassengerNumbers()
 {
@@ -128,4 +126,10 @@ async presentPassengerList(flight) {
   });
   return await modal.present();
 }
+
+private saveToFile() {
+  this.dataService.saveArrayToFile(this.mapReduceResult,'Flights_Passengers');
+}
+
+
 }

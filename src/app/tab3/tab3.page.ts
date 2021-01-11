@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { FlightData, FlightsService } from '../flights.service';
 import { Airport,AirportsService } from '../airports.service';
+import { Flight, FlightsService } from '../flights.service';
+import { AirportData, FlightData, DataService } from '../data.service';
 import { PassengerData,PassengersService } from '../passengers.service';
 
 @Component({
@@ -10,11 +11,12 @@ import { PassengerData,PassengersService } from '../passengers.service';
 })
 export class Tab3Page {
   airports:Airport[]=[];
-  flights:FlightData[]=[];
+  flights:Flight[]=[];
   mapResult:any=[];
   mapReduceResult:any=[];
   passengers:any=[];
   constructor(private airportsService:AirportsService,
+    private dataService:DataService,
     private flightsService:FlightsService,
     private passengersService:PassengersService) {}
 
@@ -26,34 +28,22 @@ ngOnInit() {
 
   this.loadAirportData();
   this.loadFlightData();
+  this.updateAirmiles();
   
   }
 
   private loadAirportData() {
-  this.airportsService.getAllAirports().subscribe(data => {
-    const list = data.split('\n');
-    list.forEach( e => {
-    const rowData=e.split(',');
-    this.airports.push({name:rowData[0],code:rowData[1],latitude:rowData[2],longitude:rowData[3],numFlights:'?'});
-    //console.log("airport "+rowData[0]);
-    });
-  });
-  
-  }
-
-  private loadFlightData()
-  {
-    this.flightsService.getAllFlights().subscribe(data => {
-      const list = data.split('\n');
-      list.forEach( e => {
-      const rowData=e.split(',');
-      this.flights.push({passenger:rowData[0],flight:rowData[1],from:rowData[2],to:rowData[3],date_time:rowData[4],
-        duration:rowData[5],dep_time:"",arr_time:"",numPassengers:""});
-      });
-    });
+      
+    this.airports=this.dataService.loadCorrectedAirports(this.airports);
+    
+    }
+  private loadFlightData() {
+    
+    this.flights=this.dataService.loadCorrectedFlights(this.flights);
+   
     }
 
-
+ 
     private updateAirmiles()
     {
       //map step returns key:flight  and value: 1 for each flight + passengerid and calculated dep_time,arr_time and duration
@@ -73,12 +63,9 @@ ngOnInit() {
       });
 
       for (i=0;i<passengerList.length;i++){
-        if(i<3){
-          this.passengers.push({passenger:passengerList[i].key,airmiles:passengerList[i].value.toFixed(0),rank:'top3'});
-        }
-        else{
-          this.passengers.push({passenger:passengerList[i].key,airmiles:passengerList[i].value,rank:''});
-        }
+        
+          this.passengers.push({passenger:passengerList[i].key,airmiles:passengerList[i].value,rank:i+1});
+        
       }
 
 
@@ -101,5 +88,9 @@ ngOnInit() {
       // console.log("calling reduce "+this.mapResult.length);
       this.passengersService.reducePassengerAirmiles(this.mapResult);
     
+        }
+
+        private saveToFile() {
+          this.dataService.saveArrayToFile(this.passengers,'PassengerAirMiles');
         }
   }

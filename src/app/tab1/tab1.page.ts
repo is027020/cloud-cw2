@@ -1,57 +1,46 @@
-import { Component } from '@angular/core';
-import {ToastController} from '@ionic/angular'
+import { Component,OnInit } from '@angular/core';
 import { Airport,AirportsService } from '../airports.service';
-import { FlightData, FlightsService } from '../flights.service';
+import { Flight, FlightsService } from '../flights.service';
+import { AirportData, FlightData, DataService } from '../data.service';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit  {
   airports:Airport[]=[];
-  flights:FlightData[]=[];
+  flights:Flight[]=[];
   mapResult:any=[];
   mapReduceResult:any=[];
   constructor(private airportsService:AirportsService,
     private flightsService:FlightsService,
-    private toastController:ToastController) {
+    private dataService:DataService) {
 
-      
     }
   ngOnInit() {
    
     // reading csv file is an async process - for prototype purposes its done inside each component - 
     // this would normally be a server side function with data loaded via an API on JSON
-
+   
     this.loadAirportData();
     this.loadFlightData();
+    this.updateFlightNumbers();
     
     }
 
     private loadAirportData() {
-    this.airportsService.getAllAirports().subscribe(data => {
-      const list = data.split('\n');
-      list.forEach( e => {
-      const rowData=e.split(',');
-      this.airports.push({name:rowData[0],code:rowData[1],latitude:rowData[2],longitude:rowData[3],numFlights:'?'});
-      //console.log("airport "+rowData[0]);
-      });
-    });
+      
+    this.airports=this.dataService.loadCorrectedAirports(this.airports);
     
     }
 
-    private loadFlightData()
-    {
-      this.flightsService.getAllFlights().subscribe(data => {
-        const list = data.split('\n');
-        list.forEach( e => {
-        const rowData=e.split(',');
-        this.flights.push({passenger:rowData[0],flight:rowData[1],from:rowData[2],to:rowData[3],date_time:rowData[4],
-          duration:rowData[5],dep_time:"",arr_time:"",numPassengers:""});
-        });
-      });
+    private loadFlightData() {
+      
+      this.flights=this.dataService.loadCorrectedFlights(this.flights);
+      
       }
+    
 
 private updateFlightNumbers()
 {
@@ -102,6 +91,10 @@ private updateFlightNumbers()
      // console.log("calling reduce "+this.mapResult.length);
       this.airportsService.reduceAirportFlights(this.mapResult);
 
+    }
+
+    private saveToFile() {
+      this.dataService.saveArrayToFile(this.airports,'AirportFlights');
     }
 }
 
