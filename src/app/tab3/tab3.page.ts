@@ -71,7 +71,7 @@ ngOnInit() {
 
        }
 
-    private mapPassengers(){
+    public mapPassengers(){
       //test execution of map function from button
        this.mapResult=this.passengersService.mapPassengerAirmiles(this.flights,this.airports);
  
@@ -82,7 +82,7 @@ ngOnInit() {
  
          }
      }
-     private reducePassengers(){
+     public reducePassengers(){
       //test execution of reduce function from button
      var reduceResult:any=[];
       // console.log("calling reduce "+this.mapResult.length);
@@ -90,7 +90,7 @@ ngOnInit() {
     
         }
 
-        private saveToFile() {
+       public saveToFile() {
           this.dataService.saveArrayToFile(this.passengers,'PassengerAirMiles');
         }
   }

@@ -46,7 +46,7 @@ export class Tab4Page implements OnInit {
     
 
 
-      private loadData(){
+      public loadData(){
 
     // check data against required formats - this function activated from button click
 
@@ -58,7 +58,7 @@ export class Tab4Page implements OnInit {
 
       
       
-  private saveErrorLog() {
+ public saveToFile() {
     this.dataService.saveArrayToFile(this.errors,'ErrorLog');
   }
 

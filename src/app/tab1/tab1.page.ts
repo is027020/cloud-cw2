@@ -81,7 +81,7 @@ private updateFlightNumbers()
  
 
    
-    private saveToFile() {
+    public saveToFile() {
 
 // save airport flight data to a text file
 

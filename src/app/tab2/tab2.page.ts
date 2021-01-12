@@ -67,7 +67,7 @@ private updatePassengerNumbers()
   
 
 
-private calcDate(unixdate){
+public calcDate(unixdate){
        //transform unix time into hours/minutes
         var i=0;
         var dateObject: Date;
@@ -129,7 +129,7 @@ async presentPassengerList(flight) {
   return await modal.present();
 }
 
-private saveToFile() {
+public saveToFile() {
   this.dataService.saveArrayToFile(this.mapReduceResult,'Flights_Passengers');
 }
 
