@@ -22,9 +22,11 @@ export class MapReduceService {
           keyList.push(mapData[j][mapValueKey]);
           mapResult.push({key:mapData[j][mapOutputKey],value:1});
           }
-          else
+          else if(mapCalculation=='airmiles')
           {
 //do some other calculation
+
+
 
           }
         }
