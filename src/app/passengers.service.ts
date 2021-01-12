@@ -8,7 +8,7 @@ export class PassengersService {
 
   constructor() { }
   public mapPassengerAirmiles(flightData,airports){
-    //map phase calculates airmiles for each passenegr flight
+    //map phase calculates airmiles for each passenger flight
 
     var j=0;
     var mapResult=[];
