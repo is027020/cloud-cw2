@@ -52,6 +52,7 @@ export class Tab4Page implements OnInit {
 
         this.errors=this.dataService.checkAirports(this.errors);
         this.errors=this.dataService.checkFlights(this.errors);
+        this.errors=this.dataService.removeFlightDuplicates(this.errors);
 
       }
 

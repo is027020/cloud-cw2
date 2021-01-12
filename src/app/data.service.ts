@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FileSaverService } from 'ngx-filesaver';
+import { StringUtils } from 'turbocommons-ts';
 
-// structure for top30 airports data
+// structure for top 30 airports data
 export interface AirportData {
 
   name:string;
@@ -40,7 +41,11 @@ export class DataService {
   //initialise arrays to hold raw and corrected data
   airports:AirportData[]=[];
   flights:FlightData[]=[];
+  flightIndex=[];
+  flightList=[];
+  invalidFlights:FlightData[]=[];
   airportList=[];
+  
 
   constructor(private http: HttpClient,private _FileSaverService: FileSaverService) { }
 
@@ -77,7 +82,7 @@ export class DataService {
 
         public checkAirports(errors){
 
-          //check airport data against requred format - non-compliant data discarded
+//check airport data against requred format - non-compliant data discarded
           this.airports=[];
           let codeRegExp= /^[A-Z]{3}$/;                                   //Format: X [3..20]
           let nameRegExp= /^[A-Z /]{3,20}$/;                              //Format: XXX
@@ -90,7 +95,7 @@ export class DataService {
           for (i=0;i<this.tmpAirports.length;i++){
           regExpPass=true;
           errorType='';
-          // check against regExp and record preesnce and type of error
+// check against regExp and record presence and type of error
   
            if(!codeRegExp.test(this.tmpAirports[i].code)){ regExpPass=false; errorType=errorType+'Code:'+this.tmpAirports[i].code;}
            if(!nameRegExp.test(this.tmpAirports[i].name)){ regExpPass=false; errorType=errorType+'Name:'+this.tmpAirports[i].name;}
@@ -100,9 +105,9 @@ export class DataService {
             if(regExpPass)
             {
   
-              //pass correct data to working array
+ //pass correct data to working array
               this.airports.push(this.tmpAirports[i]);
-              //build array of airport code to check flight data against
+//build array of airport codes to check flight data against
               this.airportList.push(this.tmpAirports[i].code);
             }
             else
@@ -114,10 +119,12 @@ export class DataService {
           console.log('data service lhas checked airports'+this.airports.length+'airport list '+this.airportList.length);
           return errors;
         }
+
+
         public checkFlights(errors){
   
           this.flights=[];
-           //check airport data against requred format - non-compliant data discarded
+//check flight data against requred format - non-compliant data discarded
   
           const passengerRegExp = /^[A-Z]{3}\d{4}[A-Z]{2}\d{1}$/;   //Format: XXXnnnnXXn
           const flightRegExp = /^[A-Z]{3}\d{4}[A-Z]{1}$/;           //Format: XXXnnnnX
@@ -128,47 +135,140 @@ export class DataService {
           var i=0;
           var regExpPass=true;
           var errorType='';
+          var flightMatch='';
           var i=0;
   
+//build a list of valid flight numbers as a reference for finding possible matches
+      
+          this.flightIndex=[];
+          this.flightList=[];
+          for (i=0;i<this.tmpFlights.length;i++){
+            if(flightRegExp.test(this.tmpFlights[i].flight)&&this.flightIndex.indexOf(this.tmpFlights[i].flight)<0)
+            {
+              this.flightIndex.push(this.tmpFlights[i].flight);
+              this.flightList.push({flight:this.tmpFlights[i].flight,to:this.tmpFlights[i].to,from:this.tmpFlights[i].from});
+            }
+          }
+
           for (i=0;i<this.tmpFlights.length;i++){
           regExpPass=true;
           errorType='';
           
-          //check against formats
+//check against formats
            if(!passengerRegExp.test(this.tmpFlights[i].passenger)){ regExpPass=false; errorType=errorType+'Passenger:'+this.tmpFlights[i].passenger;}
-           if(!flightRegExp.test(this.tmpFlights[i].flight)){ regExpPass=false; errorType=errorType+'Flight:'+this.tmpFlights[i].flight;}
-           if(!codeRegExp.test(this.tmpFlights[i].from)){ regExpPass=false; errorType=errorType+'From:'+this.tmpFlights[i].from;}
-           if(!codeRegExp.test(this.tmpFlights[i].to)){ regExpPass=false; errorType=errorType+'To:'+this.tmpFlights[i].to;}
+// for invalid flight codes and/or airport codes look for possible matches to valid flight codes
+//log these against the errors but do not correct the data
+           
+           if(!flightRegExp.test(this.tmpFlights[i].flight)){  
+            flightMatch=this.checkNearMiss(this.tmpFlights[i]);
+              if(flightMatch==null){regExpPass=false; errorType=errorType+'Flight:'+this.tmpFlights[i].flight;}
+              else{ regExpPass=false; errorType=errorType+'Flight:'+this.tmpFlights[i].flight+ ' Possible Match to: '+flightMatch;}
+              }
+
+           if(!codeRegExp.test(this.tmpFlights[i].from)){ flightMatch=this.checkNearMiss(this.tmpFlights[i]);
+            if(flightMatch==null){regExpPass=false; errorType=errorType+'From:'+this.tmpFlights[i].from;}
+            else{ regExpPass=false; errorType=errorType+'From:'+this.tmpFlights[i].from+ ' Possible Match to: '+flightMatch;}}
+
+            if(!codeRegExp.test(this.tmpFlights[i].to)){ flightMatch=this.checkNearMiss(this.tmpFlights[i]);
+              if(flightMatch==null){regExpPass=false; errorType=errorType+'To:'+this.tmpFlights[i].to;}
+              else{ regExpPass=false; errorType=errorType+'To:'+this.tmpFlights[i].to+ ' Possible Match to: '+flightMatch;}}
+
            if(!depRegExp.test(this.tmpFlights[i].date_time)){ regExpPass=false; errorType=errorType+'DepTime:'+this.tmpFlights[i].date_time;}
   
-          // check if from/to airports exist in list
+// check if from/to airports exist in list
            if(this.airportList.indexOf(this.tmpFlights[i].from)<0 ){regExpPass=false; errorType=errorType+'From:Invalid'+this.tmpFlights[i].from; }
            if(this.airportList.indexOf(this.tmpFlights[i].to)<0 ){regExpPass=false; errorType=errorType+'To:Invalid'+this.tmpFlights[i].to; }
            
-           //last data element includes a CRLF so need to trim
+//last data element includes a CRLF so need to trim
            if(typeof this.tmpFlights[i].duration !== 'undefined'){
            if(!durationRegExp.test(this.tmpFlights[i].duration.trim())){ regExpPass=false; errorType=errorType+'Duration:';}
             }
            else
            {regExpPass=false; errorType=errorType+'Duration:'}
   
-           //discard invalid rows and log error details 
+//discard invalid rows and log error details 
             if(regExpPass)
             {
               this.flights.push(this.tmpFlights[i]);
             }
             else
             {
-              errors.push({record:JSON.stringify(this.tmpFlights[i]),type:errorType,action:"Deleted"});
+            
+                errors.push({record:JSON.stringify(this.tmpFlights[i]),type:errorType,action:"Deleted"});
+              
             }
           }
 
-          console.log('data service lhas checked flights'+this.flights.length);
+//   console.log('data service has checked flights'+this.flights.length);
           return errors;
     }
 
+public removeFlightDuplicates(errors){
+
+//remove duplicate occurrences of flight/passenger key
+
+  var i=0;
+  var keyPairs=[];
+  var correctedFlights :FlightData[]=[];
+  var flightID='';
+  var passengerID='';
+  
+
+  for (i=0;i<this.flights.length;i++){
+    flightID=this.flights[i].flight;
+    passengerID=this.flights[i].passenger;
+   
+    if(keyPairs.findIndex(function (a) {
+      return (a.flight==flightID&&a.passenger==passengerID);
+    })<0)
+    {
+      keyPairs.push({flight:this.flights[i].flight,passenger:this.flights[i].passenger});
+      correctedFlights.push(this.flights[i])
+
+    }
+    else{
+  
+    errors.push({record:JSON.stringify(this.tmpFlights[i]),type:'Duplicate record:',action:"Deleted"});
+      }
+     }
+
+return errors;
+
+}
+
+private checkNearMiss(flight){
+
+// assessing Levensthein distance between flight code and valid flight codes
+//if distance <2 return as a possible match
+
+var j=0;
+var best=8;
+var bestMatch=null;
+var matchedFlight='';
+
+if(typeof flight.flight==='undefined'||flight.flight==""){
+    matchedFlight=null;}
+else
+  {
+  for (j=0;j<this.flightIndex.length;j++){
+    if(StringUtils.compareByLevenshtein(flight.flight,this.flightIndex[j])<best)
+    {
+      best=StringUtils.compareByLevenshtein(flight.flight,this.flightIndex[j]);
+      bestMatch=j;
+    }
+  }
+  
+  if(best<2){
+      matchedFlight=this.flightIndex[bestMatch];
+  }
+  }
+
+  return matchedFlight;
+  }
+
 
     public loadCorrectedAirports(airports){
+      // load corrected data ready for display/map reduce
       var i=0;
       for (i=0;i<this.airports.length;i++){
 
@@ -179,7 +279,9 @@ export class DataService {
       return airports;
     }
 
-    loadCorrectedFlights(flights){
+
+    public loadCorrectedFlights(flights){
+      // load corrected data ready for display/map reduce
       var i=0;
       for (i=0;i<this.flights.length;i++){
 
@@ -195,7 +297,7 @@ export class DataService {
 
 
     public saveArrayToFile(dataArray,fileName) {
-      //write con tents of error log to a file
+      //write contents of any array to a file
       var fileContents='';
       var i=0;
       var lineContents='';

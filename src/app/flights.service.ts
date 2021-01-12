@@ -23,7 +23,7 @@ export class FlightsService {
   
     for(j=0;j<flightData.length;j++)
       {
-          mapResult.push({key:flightData[j].flight,dep_time:flightData[j].date_time,
+          mapResult.push({key:flightData[j].flight,dep_time:flightData[j].date_time,from:flightData[j].from,to:flightData[j].to,
             arr_time:Number(flightData[j].date_time)+ Number(flightData[j].duration),duration:flightData[j].duration,
             passenger:flightData[j].passenger});
         
@@ -50,7 +50,7 @@ export class FlightsService {
           if(flightList.indexOf(mapData[j].key)<0)
           {
             flightList.push(mapData[j].key);
-            reduceResult.push({key:mapData[j].key,dep_time:"",arr_time:"",duration:"",value:0,passengerList:passengerList});
+            reduceResult.push({key:mapData[j].key,from:"",to:"",dep_time:"",arr_time:"",duration:"",value:0,passengerList:passengerList});
             
           }
         }
@@ -63,6 +63,8 @@ export class FlightsService {
               if(reduceResult[i].key==mapData[j].key){
                 reduceResult[i].value=reduceResult[i].value+1;
                 passengerList.push(mapData[j].passenger);
+                reduceResult[i].from=mapData[j].from;
+                reduceResult[i].to=mapData[j].to;
                 reduceResult[i].dep_time=mapData[j].dep_time;
                 reduceResult[i].arr_time=mapData[j].arr_time;
                 reduceResult[i].duration=mapData[j].duration;
@@ -72,12 +74,10 @@ export class FlightsService {
             }
            
             reduceResult[i].passengerList=passengerList;
-            //console.log("flight "+reduceResult[i].key+ "list 1 "+passengerList.length+"list 2 "+reduceResult[i].passengerList.length);
+           
            
             }
-           // for (i=0;i<flightList.length;i++){
-            //  console.log("flight "+reduceResult[i].key+" count "+reduceResult[i].value);
-           // }
+        
           
             return reduceResult;
     

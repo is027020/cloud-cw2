@@ -54,6 +54,8 @@ private updatePassengerNumbers()
    for(j=0;j<this.mapReduceResult.length;j++){
 
     this.flights.push({flight:this.mapReduceResult[j].key,
+    from:this.mapReduceResult[j].from,
+    to:this.mapReduceResult[j].to,
     arr_time:this.calcDate(this.mapReduceResult[j].arr_time),
     dep_time:this.calcDate(this.mapReduceResult[j].dep_time),
     duration:this.mapReduceResult[j].duration,
